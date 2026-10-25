@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Ledger Flow — 포인트 거래 원장</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<body><div class="shell">
+<aside><a class="brand" href="/"><span class="brand-icon">L</span>Ledger Flow<span class="dot"></span></a>
+<div class="workspace">DEVELOPMENT WORKSPACE</div>
+<nav><a class="active" href="/">◈ <span>거래 대시보드</span></a><a href="#transactions">⇄ <span>거래 내역</span></a><a href="#integrity">✓ <span>원장 검증</span></a><a href="/portfolio" target="_blank" rel="noopener">↗ <span>프로젝트 설명서</span></a></nav>
+<div class="sidebar-note"><span class="live-dot"></span> LOCAL DEMO<p>가상 포인트로 실행하는<br>트랜잭션 검증 환경</p><small>Node.js · SQLite<br>외부 패키지 의존성 없음</small></div></aside>
+<main><header><div class="breadcrumb">Workspace <span>/</span> Overview</div><span class="pill">SANDBOX · 실제 자산 아님</span></header>
+<section class="heading"><div><p class="eyebrow">TRANSACTION WORKSPACE</p><h1>모든 거래에, 정확한 기록.</h1><p class="subtitle">송금부터 원장 검증까지. 데이터의 흐름을 한눈에 확인하세요.</p></div><button id="refresh" class="secondary">↻ 새로고침</button></section>
+<div id="global-status" role="status" class="global-status"></div>
+<section class="metrics" aria-label="주요 지표">
+<article class="metric"><span>시스템 총 포인트</span><strong id="total">—</strong><small>지갑 간 송금 시 총량 보존</small></article>
+<article class="metric"><span>완료된 송금</span><strong id="count">—</strong><small>성공한 고유 요청만 집계</small></article>
+<article class="metric"><span>기록된 원장 항목</span><strong id="entries">—</strong><small>송금 1건 = 출금·입금 2개 항목</small></article>
+<article class="metric accent"><span>데이터 정합성</span><strong id="audit-state">—</strong><small id="audit-time">검증 대기 중</small></article>
+</section>
+<div class="work-grid"><section class="panel wallets-panel"><div class="section-title"><h2>데모 지갑</h2><span class="tag">3 WALLETS</span></div><div id="wallets"></div><div class="panel-foot">초기 발급 175,000 P · 정수 단위로 저장</div></section>
+<section class="panel transfer-panel"><div class="section-title"><h2>포인트 보내기</h2><span class="tag green">ATOMIC TRANSFER</span></div>
+<form id="transfer-form"><div class="form-row"><label>보내는 지갑<select id="sender" name="senderId"><option value="alice">앨리스</option><option value="bob">밥</option><option value="carol">캐롤</option></select></label><span class="arrow">→</span><label>받는 지갑<select id="recipient" name="recipientId"><option value="bob">밥</option><option value="alice">앨리스</option><option value="carol">캐롤</option></select></label></div>
+<label>보낼 포인트<div class="amount-input"><input id="amount" name="amount" type="number" min="1" max="1000000" step="1" value="1000" required><span>P</span></div></label>
+<label>거래 메모 <span class="optional">선택</span><input id="memo" name="memo" maxlength="100" placeholder="예: 디지털 작품 구매"></label>
+<button id="submit" class="primary" type="submit">송금 실행 <span>→</span></button></form>
+<div id="transfer-status" class="result" role="status">송금 후 같은 요청을 재전송하여 중복 방지를 확인할 수 있습니다.</div>
+<button id="replay" class="text-button" disabled>↻ 마지막 요청 그대로 재전송</button>
+<details><summary>마지막 API 응답 보기</summary><pre id="response">아직 요청이 없습니다.</pre></details>
+</section></div>
+<section class="panel transactions" id="transactions"><div class="section-title"><div><h2>거래 내역</h2><p>성공한 송금만 원장에 기록됩니다.</p></div><label class="filter-label"><span class="sr-only">지갑 필터</span><select id="filter"><option value="">모든 지갑</option><option value="alice">앨리스</option><option value="bob">밥</option><option value="carol">캐롤</option></select></label></div>
+<div class="table-scroll"><table><thead><tr><th>거래 / 메모</th><th>보내는 지갑</th><th>받는 지갑</th><th>포인트</th><th>상태</th><th>시간</th></tr></thead><tbody id="transaction-rows"></tbody></table></div>
+<div class="pagination"><span id="page-label">—</span><div><button id="prev" class="secondary" disabled>이전</button><button id="next" class="secondary" disabled>다음</button></div></div></section>
+<section id="integrity" class="integrity"><div class="shield">✓</div><div><h2>원장과 잔액을 교차 검증합니다.</h2><p id="integrity-description">현재 잔액 = 초기 잔액 + 원장 합계 · 거래별 출금 + 입금 = 0</p></div><span id="integrity-badge" class="tag">CHECKING</span></section>
+<footer><span>Ledger Flow / Backend Portfolio</span><span>로컬 데모 · 인증 및 실자산 연동 제외</span></footer>
+</main></div></body></html>

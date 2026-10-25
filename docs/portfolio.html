@@ -1,0 +1,16 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ledger Flow | 프로젝트 설명</title><style>body{font-family:"Malgun Gothic",sans-serif;max-width:850px;margin:60px auto;padding:0 25px;color:#233e32;line-height:1.9;background:#f7faf7}h1{font-size:42px;letter-spacing:-2px}h2{margin-top:35px;border-top:1px solid #d7e3da;padding-top:20px;font-size:21px}p,li{font-size:14px}pre{background:#e9f1eb;padding:20px;overflow:auto;border-radius:8px}a{color:#147151}.badge{letter-spacing:3px;font-size:11px;color:#498568}section{background:white;padding:25px;border:1px solid #e0e9e2;border-radius:10px;margin:20px 0}small{color:#6b8473}</style>
+<a href="/">← 데모로 돌아가기</a><p class="badge">BACKEND ENGINEERING / LOCAL DEMO</p><h1>Ledger Flow</h1><p>중복 요청과 부분 실패에도 일관된 잔액을 유지하는 가상 포인트 송금·원장 서비스.</p>
+<section><strong>핵심 구현</strong><p>원자적 송금 · 성공 요청 멱등성 · 조건부 잔액 차감 · 출금/입금 원장 · 정합성 검증 · 영속 저장</p><small>Node.js 24 / SQLite / JavaScript / HTML / CSS / node:test</small></section>
+<h2>01. 해결하려는 문제</h2><p>사용자가 송금 버튼을 여러 번 누르거나 응답을 받지 못해 재시도하면 중복 차감이 일어날 수 있습니다. 또한 출금 후 입금 또는 원장 저장에 실패하면 데이터가 서로 달라질 수 있습니다. 이 프로젝트는 두 문제를 작은 로컬 서비스에서 재현하고 방지합니다.</p>
+<h2>02. 처리 흐름</h2><pre>HTTP 요청 + Idempotency-Key
+  → 입력 검증
+  → BEGIN IMMEDIATE
+  → 기존 성공 요청 확인
+  → 잔액 조건부 차감 / 수취인 입금
+  → 거래 + 출금·입금 원장 저장
+  → COMMIT (실패 시 ROLLBACK)</pre>
+<p>같은 키와 같은 내용은 기존 거래를 반환하고, 같은 키에 다른 내용을 보내면 409를 반환합니다. 실패한 요청 키는 저장하지 않습니다. 초기 발급량은 175,000 P로 고정하며 송금은 총량을 바꾸지 않습니다.</p>
+<h2>03. 검증 시나리오</h2><ul><li>정상 송금: 두 지갑 잔액과 원장 두 항목 확인</li><li>동일 키 HTTP 요청 20개: 신규 성공 1개, 재전송 응답 19개</li><li>10,000 P HTTP 요청 20개: 초기 100,000 P에서 10개 성공, 10개 잔액 부족</li><li>두 번째 원장 저장 실패 강제 주입: 잔액·거래·원장 모두 롤백</li><li>DB 재연결 후 잔액과 중복 방지 유지</li><li>원장 수정/삭제 차단, 잔액 불일치 감지</li></ul>
+<p>실제 실행 결과는 docs/TEST-RESULTS.txt에 저장합니다. 실행 환경은 단일 Node 프로세스이며 분산 처리나 처리량 벤치마크를 검증한 것은 아닙니다.</p>
+<h2>04. 설계 선택과 한계</h2><p>외부 패키지 없이 실행할 수 있도록 Node.js 내장 HTTP와 SQLite를 선택했습니다. 동기식 DB 접근은 구현을 작게 유지하지만 대량 요청 처리에 한계가 있습니다. 조회는 지갑 필터와 offset 페이지네이션을 지원합니다.</p><p>원장은 수정·삭제 차단 트리거를 사용하지만 DB 관리자에 대한 암호학적 위변조 방지는 아닙니다. 인증·인가, 실자산, 블록체인 연결, 공개 배포는 구현 범위에 포함하지 않았습니다.</p>
+<h2>05. AI 활용과 제출자 확인</h2><p>초기 구현·테스트·문서는 AI 코딩 도구로 생성되었습니다. 제출자는 직접 이해하고 재현한 범위 및 실제로 수정한 부분을 설명해야 합니다. 독자 개발 경험이나 운영 경험을 주장하지 않습니다.</p><p>실행: <code>npm start</code> / 검증: <code>npm test</code> / 구문 검사: <code>npm run check</code></p><small>2026-10-25 · Ledger Flow · 가상 포인트 데모</small></html>

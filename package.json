@@ -1,0 +1,15 @@
+{
+  "name": "ledger-flow",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Transactional point ledger with idempotent transfers",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test",
+    "check": "node --check src/server.js && node --check src/ledger.js && node --check public/app.js"
+  }
+}

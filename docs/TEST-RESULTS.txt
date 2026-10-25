@@ -1,0 +1,32 @@
+Ledger Flow verification report
+Date: 2026-10-25 (Asia/Seoul)
+Runtime: Node.js v24.14.1 / Windows
+Commands: npm test; npm run check
+Result: 12 tests, 12 pass, 0 fail
+
+PASS 송금은 두 잔액과 출금·입금 원장을 함께 변경한다
+PASS 동일 키·내용 재전송은 기존 거래를 반환한다
+PASS 사용한 키의 금액·메모·수취인 변경은 충돌로 거부한다
+PASS 잔액 부족은 잔액과 원장을 전혀 변경하지 않는다
+PASS 금액 경계·자기 송금·존재하지 않는 지갑·잘못된 키를 거부한다
+PASS 원장 두 번째 항목 저장 실패 시 전체 트랜잭션을 롤백한다
+PASS 재시작 후 거래·잔액·중복 방지 키가 유지된다
+PASS 원장 수정·삭제를 막고 잔액 변조를 검출한다
+PASS 지갑 필터와 페이지네이션이 적용된다
+PASS HTTP 동시 요청 20개가 동일 키로 와도 송금은 한 번만 처리한다
+PASS 서로 다른 동시 요청이 잔액을 초과하면 초과분은 거부한다
+PASS HTTP 상태 코드·입력 검증·출처 검사·정적 화면을 확인한다
+
+Syntax checks: src/server.js, src/ledger.js, public/app.js passed.
+Browser QA: Chrome headless / Playwright
+PASS transfer, replay, insufficient balance, wallet filter, refresh
+PASS 390px mobile viewport has no document horizontal overflow
+PASS zero JavaScript page errors
+Screenshots: docs/preview-desktop.png, docs/preview-mobile.png
+PDF: 4 pages rendered and visually checked for Korean text and layout.
+
+Note:
+The first sandboxed test attempt passed 9 domain tests; 3 HTTP tests could not
+connect to loopback (EACCES). Rerunning with local network permission passed all 12.
+SQLite emits an ExperimentalWarning on this Node release; tests still pass.
+No distributed deployment, high-throughput benchmark, or real-asset tests claimed.
